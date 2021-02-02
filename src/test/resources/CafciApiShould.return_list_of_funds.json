@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "data": [
+    {
+      "nombre": "fund-name",
+      "id": "fund-id",
+      "objetivo": "objective-description",
+      "clase_fondos": [
+        {
+          "id": "fund-class-id",
+          "nombre": "fund-class-name"
+        }
+      ]
+    }
+  ]
+}
