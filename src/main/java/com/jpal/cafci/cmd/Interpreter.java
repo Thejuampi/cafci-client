@@ -9,7 +9,6 @@ import lombok.val;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -20,7 +19,6 @@ import static com.jpal.cafci.shared.Result.ok;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.joining;
 
 @Log4j2
 public class Interpreter {
@@ -31,7 +29,7 @@ public class Interpreter {
         this.config = config;
     }
 
-    public Result<String, String> run(String[] rawArgs) {
+    public Result<Stream<String>, String> run(String[] rawArgs) {
         if(rawArgs == null || rawArgs.length <= 0) return error("rawArgs is empty or null");
 
         val args = ArgumentParser.parse(rawArgs);
@@ -131,11 +129,10 @@ public class Interpreter {
         return Stream.empty();
     }
 
-    public static String report(Stream<Fund> funds) {
+    public static Stream<String> report(Stream<Fund> funds) {
         return funds
                 .sorted(comparing(fund -> parseInt(fund.id())))
-                .map(Fund::toString)
-                .collect(joining("\n"));
+                .map(Fund::toString);
     }
 
 }

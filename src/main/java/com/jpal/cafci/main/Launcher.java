@@ -38,7 +38,7 @@ public class Launcher {
 
             try {
                 val result = interpreter.run(split(input));
-                result.continued(log::info, log::error);
+                result.continued(message -> message.forEach(log::info), log::error);
             } catch (Exception e) {
                 log.error(e);
             }
