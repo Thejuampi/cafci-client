@@ -45,12 +45,16 @@ public final class CafciHttpClient {
 
     @SneakyThrows
     private HttpResponse<String> send(HttpRequest request) {
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        val response = client.send(request, ofString());
 
         if(response.statusCode() != 200)
             throw new RuntimeException("response status is bad. Response=" + response);
 
         return response;
+    }
+
+    private HttpResponse.BodyHandler<String> ofString() {
+        return HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
     }
 
 }
