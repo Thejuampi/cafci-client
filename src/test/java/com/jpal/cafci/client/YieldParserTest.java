@@ -17,7 +17,7 @@ class YieldParserTest {
         val json = "{\"success\":true,\"data\":{\"desde\":{\"fecha\":\"04/01/2021\",\"valor\":\"3322.764\"},\"hasta\":{\"fecha\":\"29/01/2021\",\"valor\":3418.589},\"rendimiento\":\"2.8839\",\"tna\":\"42.1049\",\"directo\":\"2.8839\"}}\n";
 
         Gson gson = new Gson();
-        val map = gson.fromJson(json, Map.class);
+        Map<?,?> map = gson.fromJson(json, Map.class);
 
         val result = YieldParser.parse(map(map, "data"));
 

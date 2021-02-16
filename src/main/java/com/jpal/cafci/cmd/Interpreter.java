@@ -3,7 +3,6 @@ package com.jpal.cafci.cmd;
 import com.jpal.cafci.client.*;
 import com.jpal.cafci.shared.Result;
 import com.jpal.cafci.shared.Tuple;
-import lombok.extern.log4j.Log4j2;
 import lombok.val;
 
 import java.time.DayOfWeek;
@@ -20,7 +19,6 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 
-@Log4j2
 public class Interpreter {
 
     private final CafciConfig config;

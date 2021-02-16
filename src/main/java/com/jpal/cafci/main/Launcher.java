@@ -4,6 +4,8 @@ import com.jpal.cafci.client.CafciConfig;
 import com.jpal.cafci.client.Fund;
 import com.jpal.cafci.cmd.Interpreter;
 import com.jpal.cafci.shared.Result;
+
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
@@ -34,11 +36,12 @@ public class Launcher {
         config.repo().set(funds);
         var interpreter = new Interpreter(config);
 
+        @Cleanup
         var scan = new Scanner(System.in);
 
         if (args.length > 0) {
-            if (Set.of(args).contains("--file")) {
-                printFile(interpreter);
+            if (Set.of(args).contains("--file=yield")) {
+                printFileYields(interpreter);
             }
         }
 
@@ -50,7 +53,7 @@ public class Launcher {
                 break;
 
             if(input.equals("file"))
-                printFile(interpreter);
+                printFileYields(interpreter);
 
             try {
                 print(interpreter.run(split(input)));
@@ -61,8 +64,8 @@ public class Launcher {
         }
     }
 
-    private static void printFile(Interpreter interpreter) throws IOException {
-        lines(Paths.get("src", "main", "resources", "input.csv"))
+    private static void printFileYields(Interpreter interpreter) throws IOException {
+        lines(Paths.get("src", "main", "resources", "yields.csv"))
                 .peek(l -> log.info("line -> {}", l))
                 .map(l -> split(l))
                 .map(l -> interpreter.run(l))
