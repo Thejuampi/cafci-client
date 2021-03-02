@@ -112,16 +112,16 @@ public class Interpreter {
     // this may return Result<Stream<Fund>, String>
     private Stream<Fund> findFunds(String funds) {
         if(funds == null || funds.isBlank()) {
-            return config.repo().values();
+            return config.fundsQuery().values();
         }
 
         val fundTokens = funds.split(",");
         if(fundTokens[0].matches("^\\d+$")) {
-            return config.repo().findById(funds.split(","));
+            return config.fundsQuery().findById(funds.split(","));
         }
 
         if(fundTokens[0].matches("(\\w+.*)+")) {
-            return config.repo().findByNameRegex(fundTokens);
+            return config.fundsQuery().findByNameRegex(fundTokens);
         }
 
         return Stream.empty();

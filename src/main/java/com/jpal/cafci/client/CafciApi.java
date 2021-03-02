@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.experimental.ExtensionMethod;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 import static com.jpal.cafci.client.Utils.*;
 import static java.lang.Boolean.TRUE;
 
+@ExtensionMethod({Utils.class})
 @RequiredArgsConstructor
 public class CafciApi {
 
@@ -21,7 +23,7 @@ public class CafciApi {
     @NonNull
     private final CafciHttpClient client;
     @NonNull
-    private final FundRepository repository;
+    private final SetAllFundsCommand repository;
 
     @SuppressWarnings("unchecked")
     public Stream<Fund> fetchFunds() {
@@ -35,13 +37,13 @@ public class CafciApi {
     }
 
     public Stream<Yield> fetchYield(LocalDate from, LocalDate to, Fund fund, FundClass fundClass) {
-        val fundYield = client.rendimiento(fund.id(), fundClass.id(), from, to);
-        Map<?, ?> map = gson.fromJson(fundYield, Map.class);
+        val fundYieldJson = client.rendimiento(fund.id(), fundClass.id(), from, to);
+        Map<?, ?> raw = gson.fromJson(fundYieldJson, Map.class);
 
-        if (bool(map, "success") != TRUE)
+        if (raw.bool("success") != TRUE)
             return Stream.empty();
 
-        return YieldParser.parse(listOfMaps(map, "data"));
+        return YieldParser.parse(raw.listOfMaps("data"));
     }
 
     private void enforceSuccess(Map<?, ?> map) {

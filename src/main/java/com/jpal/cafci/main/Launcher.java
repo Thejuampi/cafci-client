@@ -4,7 +4,6 @@ import com.jpal.cafci.client.CafciConfig;
 import com.jpal.cafci.client.Fund;
 import com.jpal.cafci.cmd.Interpreter;
 import com.jpal.cafci.shared.Result;
-
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -14,11 +13,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jpal.cafci.cmd.ArgsSplitter.split;
 import static java.nio.file.Files.lines;
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 @Log4j2
 public class Launcher {
@@ -30,10 +29,10 @@ public class Launcher {
         var config = new CafciConfig();
         var funds = config.api()
                 .fetchFunds()
-                .collect(Collectors.toUnmodifiableMap(
+                .collect(toUnmodifiableMap(
                         Fund::id,
                         fund -> fund));
-        config.repo().set(funds);
+        config.setAllFundsCommand().set(funds);
         var interpreter = new Interpreter(config);
 
         @Cleanup
@@ -52,30 +51,28 @@ public class Launcher {
             if (input.equals("stop"))
                 break;
 
-            if(input.equals("file"))
-                printFileYields(interpreter);
-
             try {
+                if (input.equals("file"))
+                    printFileYields(interpreter);
+
                 print(interpreter.run(split(input)));
             } catch (Exception e) {
                 log.error(e);
             }
-
         }
     }
 
     private static void printFileYields(Interpreter interpreter) throws IOException {
         lines(Paths.get("src", "main", "resources", "yields.csv"))
-                .peek(l -> log.info("line -> {}", l))
-                .map(l -> split(l))
-                .map(l -> interpreter.run(l))
-                .forEach(r -> print(r));
+            .filter(l -> !l.startsWith("#"))
+            .peek(l -> log.info("line -> {}", l))
+            .map(l -> split(l))
+            .map(l -> interpreter.run(l))
+            .forEach(r -> print(r));
     }
 
     private synchronized static void print(Result<Stream<String>, String> result) {
-        result.continued(
-                message -> message.skip(18).forEach(log::info),
-                log::error);
+        result.continued(message -> message.forEach(log::info), log::error);
     }
 
 }

@@ -14,7 +14,8 @@ import static java.util.Arrays.stream;
 
 @Value
 @Log4j2
-public class FundRepository {
+public class FundRepository
+        implements SetAllFundsCommand, FundQuery {
 
     AtomicReference<Map<String, Fund>> cache;
 
@@ -33,15 +34,18 @@ public class FundRepository {
     /**
      * @returns previous values
      */
+    @Override
     public Map<String, Fund> set(Map<String, Fund> funds) {
         log.info("setting new values");
         return cache.getAndSet(Map.copyOf(funds));
     }
 
+    @Override
     public Stream<Fund> values() {
         return cache.get().values().stream();
     }
 
+    @Override
     public Stream<Fund> findById(String... ids) {
         val current = cache.get();
         return stream(ids).distinct()
@@ -49,6 +53,7 @@ public class FundRepository {
                 .filter(Objects::nonNull);
     }
 
+    @Override
     public Stream<Fund> findByNameRegex(String... tokens) {
         val current = cache.get().values();
 
