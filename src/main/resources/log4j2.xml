@@ -3,7 +3,8 @@
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} [%t] %highlight{%-4level} %magenta{%logger{24}} - %msg%n" disableAnsi="false"/>
+            <!-- see http://logging.apache.org/log4j/2.x/manual/layouts.html#Patterns -->
+            <PatternLayout pattern="%d{ABSOLUTE} [%t] %highlight{%-4level} %magenta{%c{.}} - %msg%n" disableAnsi="false"/>
         </Console>
     </Appenders>
 

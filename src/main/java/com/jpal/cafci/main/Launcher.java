@@ -19,6 +19,7 @@ import static com.jpal.cafci.cmd.ArgsSplitter.split;
 import static java.nio.file.Files.lines;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
+// TODO refactor me!
 @Log4j2
 public class Launcher {
 
@@ -27,16 +28,7 @@ public class Launcher {
         log.info("args={}", () -> Arrays.toString(args));
 
         var config = new CafciConfig();
-        var funds = config.api()
-                .fetchFunds()
-                .collect(toUnmodifiableMap(
-                        Fund::id,
-                        fund -> fund));
-        config.setAllFundsCommand().set(funds);
         var interpreter = new Interpreter(config);
-
-        @Cleanup
-        var scan = new Scanner(System.in);
 
         if (args.length > 0) {
             if (Set.of(args).contains("--file=yield")) {
@@ -44,12 +36,25 @@ public class Launcher {
             }
         }
 
+        @Cleanup
+        var scan = new Scanner(System.in);
+
         while (true) {
             log.info("waiting for input...");
             System.out.flush();
             var input = scan.nextLine();
             if (input.equals("stop"))
                 break;
+
+            if(input.equalsIgnoreCase("fetch")) {
+                var funds = config.api()
+                        .fetchFunds()
+                        .collect(toUnmodifiableMap(
+                                Fund::id,
+                                fund -> fund));
+                config.setAllFundsCommand().set(funds);
+                continue;
+            }
 
             try {
                 if (input.equals("file"))
