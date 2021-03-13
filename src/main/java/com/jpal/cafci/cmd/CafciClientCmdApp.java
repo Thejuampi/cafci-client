@@ -52,7 +52,7 @@ public class CafciClientCmdApp
     public void visit(ReadFileAction ignored) {
         var fundAndYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
                 .filter(l -> !l.startsWith("#"))
-                .map(l -> l.replaceAll("\\s+", "\\s+"))
+                .map(l -> l.replaceAll("\\s+", "\\\s+"))
                 .peek(l -> log.info("line -> {}", l))
                 .flatMap(l -> config().fundsQuery().findByClassNameRegex(l))
                 .peek(fnc -> log.info("found {}", fnc.t2()))
