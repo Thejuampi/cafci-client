@@ -3,15 +3,9 @@ Pequeña utilidad para consultar los valores de los fondos comunes de inversión
 
 # usage
 ```
-funds
-lists all funds
+fetch
+# fetches all funds
 
-funds <regex>
-lists all funds matching the regex
-
-funds <id1,id2,id3>
-lists funds matching the ids
-
-funds <regex> classes <regex> yield . lastMonth .
-lists values of all funds and classes matching corresponding regular expressions for the last month
+file
+# reads the file and prints the last month yields
 ```
