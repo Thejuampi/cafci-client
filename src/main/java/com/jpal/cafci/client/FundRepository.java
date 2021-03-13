@@ -1,28 +1,36 @@
 package com.jpal.cafci.client;
 
+import com.jpal.cafci.shared.Impure;
+import com.jpal.cafci.shared.Pure;
+import com.jpal.cafci.shared.Tuple.Tuple2;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
-import lombok.val;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.stream;
+import static com.jpal.cafci.client.Utils.containing;
+import static com.jpal.cafci.shared.Tuple.tuple;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
 
 @Value
 @Log4j2
 public class FundRepository
         implements SetAllFundsCommand, FundQuery {
 
-    AtomicReference<Map<String, Fund>> cache;
+    @Getter(AccessLevel.PACKAGE)
+    public AtomicReference<Map<String, Fund>> cache;
 
+    @Pure
     public static FundRepository empty() {
         return withInitialValue(Map.of());
     }
 
+    @Pure
     public static FundRepository withInitialValue(Map<String, Fund> initialValue) {
         return new FundRepository(initialValue);
     }
@@ -31,37 +39,22 @@ public class FundRepository
         cache = new AtomicReference<>(Map.copyOf(initialValue));
     }
 
-    /**
-     * @returns previous values
-     */
     @Override
+    @Impure(cause = "state mutation and logging")
     public Map<String, Fund> set(Map<String, Fund> funds) {
         log.info("setting new values");
         return cache.getAndSet(Map.copyOf(funds));
     }
 
     @Override
-    public Stream<Fund> values() {
-        return cache.get().values().stream();
+    @Impure(cause = "output may change from call to call")
+    public Stream<Tuple2<Fund, FundClass>> findByClassNameRegex(String regex) {
+        var pattern = compile(containing(regex), CASE_INSENSITIVE);
+        return cache.get().values().stream()
+                .flatMap(fund -> fund.classes().stream()
+                .filter(fundClass -> pattern
+                        .matcher(fundClass.name())
+                        .matches())
+                .map(fundClass -> tuple(fund, fundClass)));
     }
-
-    @Override
-    public Stream<Fund> findById(String... ids) {
-        val current = cache.get();
-        return stream(ids).distinct()
-                .map(current::get)
-                .filter(Objects::nonNull);
-    }
-
-    @Override
-    public Stream<Fund> findByNameRegex(String... tokens) {
-        val current = cache.get().values();
-
-        return stream(tokens)
-                .map(token -> Utils.containing(token))
-                .map(token -> Pattern.compile(token, Pattern.CASE_INSENSITIVE))
-                .flatMap(pattern -> current.stream()
-                .filter(fund -> pattern.matcher(fund.name()).matches()));
-    }
-
 }

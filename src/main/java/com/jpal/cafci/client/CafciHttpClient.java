@@ -1,5 +1,6 @@
 package com.jpal.cafci.client;
 
+import com.jpal.cafci.shared.Impure;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -21,6 +22,7 @@ public final class CafciHttpClient {
 
     // config.apiUrl+'/fondo/'+$scope.fondo.fondoId+'/clase/'+$scope.fondo.claseFondoId+'/ficha'
     // e.g.: https://api.cafci.org.ar/fondo/747/clase/1638/ficha
+    @SuppressWarnings("unused")
     public String ficha(String fondoId, String claseId) {
         throw new UnsupportedOperationException();
     }
@@ -35,6 +37,7 @@ public final class CafciHttpClient {
     }
 
     // e.g.: https://api.cafci.org.ar/fondo?include=clase_fondo
+    @Impure(cause = "http io")
     public String fetchFundJson() {
         val request = HttpRequest.newBuilder(URI.create("https://api.cafci.org.ar/fondo?include=clase_fondo&limit=0&estado=1"))
                 .GET()
@@ -44,6 +47,7 @@ public final class CafciHttpClient {
     }
 
     @SneakyThrows
+    @Impure(cause = "http io")
     private HttpResponse<String> send(HttpRequest request) {
         val response = client.send(request, ofString());
 

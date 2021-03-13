@@ -5,6 +5,7 @@ import lombok.Value;
 
 public abstract class Tuple {
 
+    @SuppressWarnings("unused")
     public static <T1> Tuple1<T1> tuple(T1 t1) {
         return new Tuple1<>(t1);
     }

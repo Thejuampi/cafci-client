@@ -1,11 +1,11 @@
 package com.jpal.cafci.client;
 
+import com.jpal.cafci.shared.Tuple;
+
 import java.util.stream.Stream;
 
 public interface FundQuery {
-    Stream<Fund> values();
 
-    Stream<Fund> findById(String... ids);
+    Stream<Tuple.Tuple2<Fund, FundClass>> findByClassNameRegex(String regex);
 
-    Stream<Fund> findByNameRegex(String... tokens);
 }

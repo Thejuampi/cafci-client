@@ -35,16 +35,11 @@ public class Utils {
         return (Boolean) map.get(field);
     }
 
-    public static void checkArgument(boolean condition, String message) {
-        if(!condition) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
     Map<?,?> map(Map<?,?> raw, String field) {
         return (Map<?, ?>) raw.get(field);
     }
 
+    @SuppressWarnings("SameParameterValue")
     static LocalDate date(Map<?, ?> raw, String field, DateTimeFormatter fmt) {
         return LocalDate.parse(string(raw, field), fmt);
     }

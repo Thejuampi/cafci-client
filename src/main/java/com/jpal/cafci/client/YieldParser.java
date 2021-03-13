@@ -1,5 +1,6 @@
 package com.jpal.cafci.client;
 
+import com.jpal.cafci.shared.Pure;
 import lombok.experimental.UtilityClass;
 
 import java.time.format.DateTimeFormatter;
@@ -12,12 +13,15 @@ import static com.jpal.cafci.client.Utils.*;
 @UtilityClass
 public class YieldParser {
 
-    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Pure
     Stream<Yield> parse(List<Map<?,?>> rawList) {
-        return rawList.stream().map(YieldParser::parse);
+        return rawList.stream()
+                .map(YieldParser::parse);
     }
 
+    @Pure
     Yield parse(Map<?, ?> raw) {
         return Yield.builder()
                 .from(date(map(raw, "desde"), "fecha", fmt))

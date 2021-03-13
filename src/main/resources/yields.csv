@@ -1,12 +1,8 @@
-classes "clase a" lastMonth . yield . funds "COMPASS AHORRO"
-classes "clase a" lastMonth . yield . funds "BALANZ INSTITUCIONAL"
-classes "clase a" lastMonth . yield . funds "CONSULTATIO ESTRATEGIA"
-classes "clase a" lastMonth . yield . funds "DELTA AHORRO PLUS"
-classes "clase a" lastMonth . yield . funds "DELTA GESTION VIII"
-classes "clase u" lastMonth . yield . funds "MAF RENTA BALANCEADA"
-classes "clase a" lastMonth . yield . funds "MEGAINVER LIQUIDEZ PESOS"
-classes "clase a" lastMonth . yield . funds "MEGAINVER RENTA FIJA"
-# classes "clase a" lastMonth . yield . funds "CONSULTATIO RENTA LOCAL"
-# classes "clase a" lastMonth . yield . funds "GALILEO EVENT DRIVEN"
-# classes "clase a" lastMonth . yield . funds "GAINVEST.*PROTECCI.N.*PLUS"
-
+compass ahorro - clase a
+balanz institucional - clase a
+consultatio estrategia - clase a
+delta ahorro plus - clase a
+delta gestion viii - clase a
+maf renta balanceada - clase u
+megainver liquidez pesos - clase a
+megainver renta fija - clase a

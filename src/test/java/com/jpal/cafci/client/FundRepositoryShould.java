@@ -21,7 +21,7 @@ class FundRepositoryShould {
         repo.set(Map.of("fund-id", fund));
 
         //then
-        assertThat(repo.values().findAny()).get().isEqualTo(fund);
+        assertThat(repo.cache.get()).containsValue(fund);
     }
 
     @Test

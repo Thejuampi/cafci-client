@@ -26,7 +26,7 @@ class CafciApiShould {
 
     @Test
     void return_list_of_funds() {
-        val input = readFile("CafciApiShould.return_list_of_funds.json");
+        val input = readFile();
         CafciHttpClient client = Mockito.mock(CafciHttpClient.class);
         Mockito.when(client.fetchFundJson()).thenReturn(input);
 
@@ -43,8 +43,8 @@ class CafciApiShould {
                 .build()), result.collect(toList()));
     }
 
-    private String readFile(String filename) {
-        return Files.contentOf(new File("src/test/resources/" + filename),
+    private String readFile() {
+        return Files.contentOf(new File("src/test/resources/" + "CafciApiShould.return_list_of_funds.json"),
                 StandardCharsets.UTF_8);
     }
 }
