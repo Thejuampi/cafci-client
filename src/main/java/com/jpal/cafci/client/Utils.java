@@ -50,4 +50,8 @@ public class Utils {
 
         return start + token + end;
     }
+
+    public static String spacesAsWildcard(String token) {
+        return token.replaceAll("\\s+", ".*");
+    }
 }
