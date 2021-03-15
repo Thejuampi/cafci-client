@@ -50,7 +50,7 @@ public class CafciClientCmdApp
     @SneakyThrows
     @Override
     public void visit(ReadFileAction ignored) {
-        var fundAndYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
+        var fundWithYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
                 .filter(l -> !l.startsWith("#"))
                 .map(l -> l.replaceAll("\\s+", "\\\s+"))
                 .peek(l -> log.info("line -> {}", l))
@@ -60,7 +60,18 @@ public class CafciClientCmdApp
                 .map(_yield -> tuple(fnc.t2(), _yield)));
 
         YieldReporter
-                .reportYields(fundAndYields)
+                .reportYields(fundWithYields)
+                .forEach(log::info);
+    }
+
+    @Override
+    public void visit(FundAction fundAction) {
+        var fundsWithYields = config().fundsQuery().findByClassNameRegex(fundAction.fund().replaceAll("\\s+", "\\\s+"))
+                .peek(fnc -> log.info("found {}", fnc.t2()))
+                .flatMap(fnc -> fetchYields(fnc)
+                .map(_yield -> tuple(fnc.t2(), _yield)));
+
+        YieldReporter.reportYields(fundsWithYields)
                 .forEach(log::info);
     }
 

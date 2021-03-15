@@ -6,4 +6,6 @@ public interface ActionVisitor {
 
     void visit(ReadFileAction __);
 
+    void visit(FundAction fundAction);
+
 }
