@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import static com.jpal.cafci.client.Utils.spacesAsWildcard;
 import static com.jpal.cafci.shared.Tuple.tuple;
 import static java.nio.file.Files.lines;
 
@@ -52,7 +53,7 @@ public class CafciClientCmdApp
     public void visit(ReadFileAction ignored) {
         var fundWithYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
                 .filter(l -> !l.startsWith("#"))
-                .map(l -> l.replaceAll("\\s+", "\\\s+"))
+                .map(l -> spacesAsWildcard(l))
                 .peek(l -> log.info("line -> {}", l))
                 .flatMap(l -> config().fundsQuery().findByClassNameRegex(l))
                 .peek(fnc -> log.info("found {}", fnc.t2()))
@@ -66,7 +67,7 @@ public class CafciClientCmdApp
 
     @Override
     public void visit(FundAction fundAction) {
-        var fundsWithYields = config().fundsQuery().findByClassNameRegex(fundAction.fund().replaceAll("\\s+", "\\\s+"))
+        var fundsWithYields = config().fundsQuery().findByClassNameRegex(spacesAsWildcard(fundAction.fund()))
                 .peek(fnc -> log.info("found {}", fnc.t2()))
                 .flatMap(fnc -> fetchYields(fnc)
                 .map(_yield -> tuple(fnc.t2(), _yield)));
