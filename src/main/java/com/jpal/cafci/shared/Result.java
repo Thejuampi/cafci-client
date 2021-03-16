@@ -21,7 +21,7 @@ public abstract class Result<OK, ERROR> {
     );
 
     @Value
-    @EqualsAndHashCode(callSuper = true)
+    @EqualsAndHashCode(callSuper = false)
     static class Ok<OK, ERROR>
             extends Result<OK, ERROR> {
 
@@ -35,7 +35,7 @@ public abstract class Result<OK, ERROR> {
     }
 
     @Value
-    @EqualsAndHashCode(callSuper = true)
+    @EqualsAndHashCode(callSuper = false)
     static class Error<OK, ERROR>
             extends Result<OK, ERROR> {
 

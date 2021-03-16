@@ -3,6 +3,7 @@ package com.jpal.cafci.client;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
@@ -34,10 +35,26 @@ class FundRepositoryShould {
         assertThat(result).isEqualTo(initialValue);
     }
 
+    @Test
+    void returns_fund_classes() {
+        val initialValue = Map.of("id", randomFund());
+        val repo = FundRepository.withInitialValue(initialValue);
+
+        val result = repo.findByClassNameRegex("fund-class-name");
+        
+        assertThat(result).isNotEmpty();
+    }
+
     private Fund randomFund() {
         return new Fund("fund-id",
                 "fund-name",
                 "fund-objective",
-                emptyList());
+                List.of(randomFundClass()));
+    }
+
+    private FundClass randomFundClass() {
+        return new FundClass(
+                "fund-class-id",
+                "fund-class-name");
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.Map;
 
 import static com.jpal.cafci.client.Utils.map;
@@ -19,9 +20,9 @@ class YieldParserTest {
         Gson gson = new Gson();
         Map<?,?> map = gson.fromJson(json, Map.class);
 
-        val result = YieldParser.parse(map(map, "data"));
+        val result = YieldParser.parse(List.of(map(map, "data"))).findAny();
 
-        Assertions.assertThat(result).isEqualTo(Yield.builder()
+        Assertions.assertThat(result).get().isEqualTo(Yield.builder()
                 .from(LocalDate.of(2021, Month.JANUARY, 4))
                 .to(LocalDate.of(2021, Month.JANUARY, 29))
                 .value(3418.589)
