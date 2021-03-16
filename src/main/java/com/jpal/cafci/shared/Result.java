@@ -27,10 +27,6 @@ public abstract class Result<OK, ERROR> {
 
         OK value;
 
-        Ok(OK value) {
-            this.value = value;
-        }
-
         @Override
         public void continued(Consumer<OK> okConsumer,
                               Consumer<ERROR> errorConsumer) {
@@ -44,10 +40,6 @@ public abstract class Result<OK, ERROR> {
             extends Result<OK, ERROR> {
 
         ERROR error;
-
-        Error(ERROR error) {
-            this.error = error;
-        }
 
         @Override
         public void continued(Consumer<OK> okConsumer,

@@ -44,7 +44,7 @@ public class CafciClientCmdApp
     public void visit(FetchFundsAction ignored) {
         log.info("fetching yields...");
         var funds = config.api().fetchFunds();
-        var fundsById = Utils.indexById(funds);
+        var fundsById = Utils.indexBy(funds, Fund::id);
         config.setAllFundsCommand().set(fundsById);
     }
 
@@ -53,7 +53,7 @@ public class CafciClientCmdApp
     public void visit(ReadFileAction ignored) {
         var fundWithYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
                 .filter(l -> !l.startsWith("#"))
-                .map(l -> spacesAsWildcard(l))
+                .map(l -> l.replaceAll("\\s+", "\\\s+"))
                 .peek(l -> log.info("line -> {}", l))
                 .flatMap(l -> config().fundsQuery().findByClassNameRegex(l))
                 .peek(fnc -> log.info("found {}", fnc.t2()))
