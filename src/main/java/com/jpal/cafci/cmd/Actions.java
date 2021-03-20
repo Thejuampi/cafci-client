@@ -3,7 +3,6 @@ package com.jpal.cafci.cmd;
 import com.jpal.cafci.shared.Pure;
 import com.jpal.cafci.shared.Result;
 import lombok.experimental.UtilityClass;
-import lombok.val;
 
 import static com.jpal.cafci.shared.Result.error;
 import static com.jpal.cafci.shared.Result.ok;

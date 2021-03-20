@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.jpal.cafci.client.Utils.string;
+
 public class FundClassParser {
 
     @Pure
@@ -17,8 +19,8 @@ public class FundClassParser {
     @Pure
     private static FundClass parse(Map<?, ?> m) {
         return FundClass.builder()
-                .id(Utils.string(m, "id"))
-                .name(Utils.string(m, "nombre"))
+                .id(string(m, "id"))
+                .name(string(m, "nombre"))
                 .build();
     }
 }

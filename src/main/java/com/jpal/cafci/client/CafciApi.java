@@ -49,7 +49,7 @@ public class CafciApi {
         val fundYieldJson = client.rendimiento(fund.id(), fundClass.id(), from, to);
         Map<?, ?> raw = gson.fromJson(fundYieldJson, Map.class);
 
-        if (raw.bool("success") != TRUE)
+        if (bool(raw, "success") != TRUE)
             return Stream.empty();
 
         return YieldParser.parse(listOfMaps(raw, "data"));
