@@ -1,6 +1,7 @@
 package com.jpal.cafci.client;
 
 import lombok.val;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.Month;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@Disabled("IO")
 class CafciHttpClientShould {
 
     @Test

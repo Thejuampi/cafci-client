@@ -13,7 +13,7 @@ class UtilsTest {
 
     @Test
     void instantiation_is_not_allowed() {
-        assertThrows(Exception.class, () -> Utils.class.newInstance()) ;
+        assertThrows(Exception.class, () -> Utils.class.getDeclaredConstructor().newInstance()) ;
     }
 
     @Test
