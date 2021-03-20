@@ -42,7 +42,7 @@ public class FundRepository
     @Override
     @Impure(cause = "state mutation and logging")
     public Map<String, Fund> set(Map<String, Fund> funds) {
-        log.info("setting new values");
+        log.info("setting {} new values", funds.size());
         return cache.getAndSet(Map.copyOf(funds));
     }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 
+@Deprecated
 public class ArgumentParser {
 
     /**

@@ -8,4 +8,5 @@ public interface ActionVisitor {
 
     void visit(FundAction fundAction);
 
+    void visit(StopAction __);
 }

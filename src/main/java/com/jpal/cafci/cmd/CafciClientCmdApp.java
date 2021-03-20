@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static com.jpal.cafci.client.Utils.spacesAsWildcard;
@@ -25,14 +26,16 @@ public class CafciClientCmdApp
 
     CafciConfig config;
 
+    AtomicBoolean running = new AtomicBoolean(false);
+
     public void run() {
+        running.set(true);
         @Cleanup
         var scan = new Scanner(System.in);
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
+        while (running.get()) {
             log.info("waiting for input...");
-            Actions.actionOrError(scan.nextLine())
+            Actions.v2(scan.nextLine())
                     .continued(
                             action -> action.execute(this),
                             log::error
@@ -74,6 +77,13 @@ public class CafciClientCmdApp
 
         YieldReporter.reportYields(fundsWithYields)
                 .forEach(log::info);
+    }
+
+    @Override
+    @Impure(cause = "sets running flag to false")
+    public void visit(StopAction __) {
+        log.info("stopping...");
+        this.running.set(false);
     }
 
     @Impure(cause = "LocalDate.now()")
