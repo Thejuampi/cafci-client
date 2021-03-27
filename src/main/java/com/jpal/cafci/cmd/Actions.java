@@ -11,23 +11,18 @@ import static com.jpal.cafci.shared.Result.ok;
 public class Actions {
 
     @Pure
-    Result<Action, String> v2(String input) {
+    Result<Action, String> action(String input) {
         var actionAndArgs = ArgParserV2.parse(input);
-        if (actionAndArgs.isError()) return error(actionAndArgs.error());
+        if (actionAndArgs.isError()) return actionAndArgs.cast();
 
-        switch (actionAndArgs.ok().action()) {
-            case "fetch": return ok(new FetchFundsAction());
-            case "file": return ok(new ReadFileAction());
-            case "fund": {
-                var args = actionAndArgs.ok().args();
-
-                if (args.containsKey("name")) return ok(new FundAction(args.get("name")));
-                if (args.containsKey("n")) return ok(new FundAction(args.get("n")));
-                return error("neither --name nor -n was specified");
-            }
-            default:
-                return error("unable to get an action");
-        }
+        var args = actionAndArgs.ok();
+        return switch (args.action()) {
+            case "fetch" -> ok(new FetchFundsAction());
+            case "file" -> ok(new ReadFileAction());
+            case "fund" -> FundAction.create(args.args());
+            case "stop" -> ok(new StopAction());
+            default -> error("unable to get an action");
+        };
     }
 
 }

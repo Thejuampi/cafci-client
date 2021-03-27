@@ -9,16 +9,21 @@ class ActionsTest {
 
     @Test
     void file_action() {
-        assertEquals(ok(new ReadFileAction()), Actions.v2("file"));
+        assertEquals(ok(new ReadFileAction()), Actions.action("file"));
     }
 
     @Test
     void fund_action() {
-        assertEquals(ok(new FundAction("arg")), Actions.v2("fund --name arg"));
+        assertEquals(ok(new FundAction("arg")), Actions.action("fund --name arg"));
     }
 
     @Test
     void fetch_action() {
-        assertEquals(ok(new FetchFundsAction()), Actions.v2("fetch"));
+        assertEquals(ok(new FetchFundsAction()), Actions.action("fetch"));
+    }
+
+    @Test
+    void stop_action() {
+        assertEquals(ok(new StopAction()), Actions.action("stop"));
     }
 }

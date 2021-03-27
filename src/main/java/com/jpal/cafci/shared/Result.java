@@ -9,6 +9,12 @@ public abstract class Result<OK, ERROR> {
 
     public abstract OK ok();
     public abstract ERROR error();
+    public abstract boolean isError();
+
+    @SuppressWarnings("unchecked")
+    public final <OK2> Result<OK2, ERROR> cast() {
+        return (Result<OK2, ERROR>) this;
+    }
 
     public static <OK, ERROR> Result<OK, ERROR> ok(OK ok) {
         return new Ok<>(ok);
@@ -22,8 +28,6 @@ public abstract class Result<OK, ERROR> {
             Consumer<OK> okConsumer,
             Consumer<ERROR> errorConsumer
     );
-
-    public abstract boolean isError();
 
     @Value
     @EqualsAndHashCode(callSuper = false)

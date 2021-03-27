@@ -36,7 +36,7 @@ public class CafciClientCmdApp {
 
         while (running.get()) {
             log.info("waiting for input...");
-            Actions.v2(scan.nextLine())
+            Actions.action(scan.nextLine())
                     .continued(
                             action -> action.execute(actionVisitor),
                             log::error
