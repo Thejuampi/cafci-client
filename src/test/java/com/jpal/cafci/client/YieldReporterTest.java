@@ -42,7 +42,7 @@ class YieldReporterTest {
     @Test
     void empty() {
         //given
-        var input = Stream.<Tuple.Tuple2<FundClass, Yield>>of();
+        var input = Stream.<Tuple>of();
         //when
         var result = YieldReporter.reportYields(input);
         //then

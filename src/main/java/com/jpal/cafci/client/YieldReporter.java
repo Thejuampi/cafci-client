@@ -1,7 +1,7 @@
 package com.jpal.cafci.client;
 
 import com.jpal.cafci.shared.Pure;
-import com.jpal.cafci.shared.Tuple.Tuple2;
+import com.jpal.cafci.shared.Tuple;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import static java.util.stream.Stream.concat;
 public class YieldReporter {
 
     @Pure
-    public Stream<String> reportYields(Stream<Tuple2<FundClass, Yield>> yields) {
+    public Stream<String> reportYields(Stream<Tuple> yields) {
         var report = yields
                 .map(t -> format("fund: %s day: %s direct: %.3f%% accumulated: %.3f%%",
                         fundClass(t).name(),
@@ -34,12 +34,12 @@ public class YieldReporter {
                 date.getYear() % 1000);
     }
 
-    private static FundClass fundClass(Tuple2<FundClass, Yield> t) {
-        return t.t1();
+    private static FundClass fundClass(Tuple t) {
+        return t._1();
     }
 
-    private static Yield _yield(Tuple2<FundClass, Yield> t) {
-        return t.t2();
+    private static Yield _yield(Tuple t) {
+        return t._2();
     }
 
 }

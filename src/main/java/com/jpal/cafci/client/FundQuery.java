@@ -6,6 +6,6 @@ import java.util.stream.Stream;
 
 public interface FundQuery {
 
-    Stream<Tuple.Tuple2<Fund, FundClass>> findByClassNameRegex(String regex);
+    Stream<Tuple> findByClassNameRegex(String regex);
 
 }

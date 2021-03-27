@@ -2,7 +2,7 @@ package com.jpal.cafci.client;
 
 import com.jpal.cafci.shared.Impure;
 import com.jpal.cafci.shared.Pure;
-import com.jpal.cafci.shared.Tuple.Tuple2;
+import com.jpal.cafci.shared.Tuple;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
@@ -48,7 +48,7 @@ public class FundRepository
 
     @Override
     @Impure(cause = "output may change from call to call")
-    public Stream<Tuple2<Fund, FundClass>> findByClassNameRegex(String regex) {
+    public Stream<Tuple> findByClassNameRegex(String regex) {
         var pattern = compile(containing(regex), CASE_INSENSITIVE);
         return cache.get().values().stream()
                 .flatMap(fund -> fund.classes().stream()

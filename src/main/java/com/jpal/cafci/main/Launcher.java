@@ -13,9 +13,9 @@ public class Launcher {
     @SneakyThrows
     public static void main(String... args) {
         log.info("args={}", () -> Arrays.toString(args));
-        var config = new CafciConfig();
+        var config = CafciConfig.create();
 
-        new CafciClientCmdApp(config).run();
+        new CafciClientCmdApp(config, System.in).run();
     }
 
 }
