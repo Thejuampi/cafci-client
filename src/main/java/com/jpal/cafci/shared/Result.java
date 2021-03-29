@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class Result<OK, ERROR> {
 
@@ -22,6 +23,10 @@ public abstract class Result<OK, ERROR> {
 
     public static <OK, ERROR> Result<OK, ERROR> error(ERROR error) {
         return new Error<>(error);
+    }
+
+    public static <OK> Result<OK, String> error(String format, Object... args) {
+        return new LazyStringError<>(() -> format.formatted(args));
     }
 
     public abstract void continued(
@@ -69,4 +74,27 @@ public abstract class Result<OK, ERROR> {
         public boolean isError() { return true; }
     }
 
+    @Value
+    @EqualsAndHashCode(callSuper = false)
+    private static class LazyStringError <OK>
+            extends Result<OK, String> {
+
+        Supplier<String> supplier;
+
+        @Override
+        public OK ok() { throw new IllegalStateException("this is an error!: " + error()); }
+
+        @Override
+        public String error() { return supplier.get(); }
+
+        @Override
+        public boolean isError() { return true; }
+
+        @Override
+        public void continued(Consumer<OK> ignored,
+                              Consumer<String> errorConsumer) {
+            errorConsumer.accept(this.supplier.get());
+        }
+
+    }
 }

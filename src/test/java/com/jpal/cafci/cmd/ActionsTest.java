@@ -26,4 +26,11 @@ class ActionsTest {
     void stop_action() {
         assertEquals(ok(new StopAction()), Actions.action("stop"));
     }
+
+    @Test
+    void error() {
+        assertEquals(
+                "unable to get an action for input [not a valid input]",
+                Actions.action("not a valid input").error());
+    }
 }
