@@ -10,7 +10,7 @@ import java.time.Month;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@Disabled("IO")
+//@Disabled("IO")
 class CafciHttpClientShould {
 
     @Test

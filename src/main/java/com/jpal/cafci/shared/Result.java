@@ -34,6 +34,8 @@ public abstract class Result<OK, ERROR> {
             Consumer<ERROR> errorConsumer
     );
 
+    public abstract boolean isOk();
+
     @Value
     @EqualsAndHashCode(callSuper = false)
     static class Ok<OK, ERROR>
@@ -49,6 +51,9 @@ public abstract class Result<OK, ERROR> {
                               Consumer<ERROR> errorConsumer) {
             okConsumer.accept(ok);
         }
+
+        @Override
+        public boolean isOk() { return true; }
 
         @Override
         public boolean isError() { return false; }
@@ -69,6 +74,9 @@ public abstract class Result<OK, ERROR> {
                               Consumer<ERROR> errorConsumer) {
             errorConsumer.accept(error);
         }
+
+        @Override
+        public boolean isOk() { return false; }
 
         @Override
         public boolean isError() { return true; }
@@ -95,6 +103,9 @@ public abstract class Result<OK, ERROR> {
                               Consumer<String> errorConsumer) {
             errorConsumer.accept(this.supplier.get());
         }
+
+        @Override
+        public boolean isOk() { return false; }
 
     }
 }

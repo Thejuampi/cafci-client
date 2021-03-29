@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
-@Disabled("Integration test - end to end")
+//@Disabled("Integration test - end to end")
 class CafciClientCmdAppIntegrationTest {
 
     @NonFinal PipedOutputStream writer;
@@ -42,6 +42,7 @@ class CafciClientCmdAppIntegrationTest {
 
     @AfterEach
     void tearDown() {
+        sendCommand("\n");
         app.stop();
     }
 

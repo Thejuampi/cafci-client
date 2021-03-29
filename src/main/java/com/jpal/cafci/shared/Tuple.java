@@ -1,6 +1,7 @@
 package com.jpal.cafci.shared;
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Value;
 
 public abstract class Tuple {
@@ -18,10 +19,10 @@ public abstract class Tuple {
     }
 
     @Value
-    @EqualsAndHashCode(callSuper = true)
+    @EqualsAndHashCode(callSuper = false)
     @SuppressWarnings("unchecked")
     public static class Tuple1<T1> extends Tuple {
-        T1 t1;
+        @NonNull T1 t1;
 
         @Override
         public T1 _1() {
@@ -35,11 +36,11 @@ public abstract class Tuple {
     }
 
     @Value
-    @EqualsAndHashCode(callSuper = true)
+    @EqualsAndHashCode(callSuper = false)
     @SuppressWarnings("unchecked")
     public static class Tuple2<T1, T2> extends Tuple {
-        T1 t1;
-        T2 t2;
+        @NonNull T1 t1;
+        @NonNull T2 t2;
 
         @Override
         public T1 _1() {
