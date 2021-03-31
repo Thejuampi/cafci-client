@@ -5,6 +5,7 @@ import com.jpal.cafci.client.CafciConfig;
 import com.jpal.cafci.client.FundRepository;
 import lombok.SneakyThrows;
 import lombok.experimental.NonFinal;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -25,6 +26,7 @@ class CafciClientCmdAppIntegrationTest {
     @NonFinal FundRepository repo;
     @NonFinal CafciApi api;
     @NonFinal CafciClientCmdApp app;
+    @NonFinal Logger log;
 
     @BeforeEach
     @SneakyThrows
@@ -36,7 +38,8 @@ class CafciClientCmdAppIntegrationTest {
         var httpClient = spy(config.httpClient());
         repo = spy(config.repo());
         api = spy(config.api());
-        app = new CafciClientCmdApp(new CafciConfig(repo, httpClient, api), reader);
+        log = mock(Logger.class);
+        app = new CafciClientCmdApp(new CafciConfig(repo, httpClient, api), reader, log);
         new Thread(app::run).start();
     }
 
@@ -66,12 +69,12 @@ class CafciClientCmdAppIntegrationTest {
         sendCommand(command);
 
         verify(api, timeout(5000).atLeastOnce()).fetchYield(any(), any(), any(), any());
+        verify(log, atLeastOnce()).info("Report of yields");
     }
 
     @SneakyThrows
-    private void sendCommand(String command) {
+    void sendCommand(String command) {
         writer.write(command.getBytes(StandardCharsets.UTF_8));
     }
-
 
 }

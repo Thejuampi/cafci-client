@@ -3,10 +3,8 @@ package com.jpal.cafci.cmd;
 import com.jpal.cafci.client.*;
 import com.jpal.cafci.shared.Impure;
 import com.jpal.cafci.shared.Utils;
-import lombok.Cleanup;
-import lombok.SneakyThrows;
-import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.*;
+import org.apache.logging.log4j.Logger;
 
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -20,7 +18,7 @@ import static com.jpal.cafci.shared.Tuple.tuple;
 import static java.nio.file.Files.lines;
 
 @Value
-@Log4j2
+@Getter(AccessLevel.NONE)
 public class CafciClientCmdApp {
 
     AtomicBoolean running = new AtomicBoolean(false);
@@ -28,6 +26,7 @@ public class CafciClientCmdApp {
     CafciConfig config;
     ActionVisitorDelegate actionVisitor = new ActionVisitorDelegate();
     InputStream in;
+    Logger log;
 
     public void run() {
         running.set(true);
@@ -48,17 +47,7 @@ public class CafciClientCmdApp {
         this.running.set(false);
     }
 
-    @Impure(cause = "LocalDate.now()")
-    private Stream<Yield> fetchYields(Fund fund,
-                                      FundClass fundClass) {
-        return config.api().fetchYield(
-                LocalDate.now().minusMonths(1),
-                LocalDate.now(),
-                fund,
-                fundClass);
-    }
-
-    private class ActionVisitorDelegate
+    private final class ActionVisitorDelegate
             implements ActionVisitor {
 
         @Override
@@ -76,9 +65,9 @@ public class CafciClientCmdApp {
                     .filter(l -> !l.startsWith("#"))
                     .map(l -> l.replaceAll("\\s+", "\\\s+"))
                     .peek(l -> log.info("line -> {}", l))
-                    .flatMap(l -> config().fundsQuery().findByClassNameRegex(l))
+                    .flatMap(l -> config.fundsQuery().findByClassNameRegex(l))
                     .peek(fnc -> log.info("found {}", fnc::_2))
-                    .flatMap(fnc -> fetchYields(fnc._1(), fnc._2())
+                    .flatMap(fnc -> fetchYields(fnc._1(), fnc._2(), config.api())
                             .map(_yield -> tuple(fnc._2(), _yield)));
 
             YieldReporter
@@ -88,11 +77,11 @@ public class CafciClientCmdApp {
 
         @Override
         public void visit(FundAction fundAction) {
-            var fundsWithYields = config().fundsQuery()
+            var fundsWithYields = config.fundsQuery()
                     .findByClassNameRegex(spacesAsWildcard(fundAction.fund()))
-                    .peek(fnc -> log.info("found {}", () -> fnc._2()))
-                    .flatMap(fnc -> fetchYields(fnc._1(), fnc._2())
-                            .map(_yield -> tuple(fnc._2(), _yield)));
+                    .peek(fnc -> log.info("found {}", fnc::_2))
+                    .flatMap(fnc -> fetchYields(fnc._1(), fnc._2(), config.api())
+                    .map(_yield -> tuple(fnc._2(), _yield)));
 
             YieldReporter.reportYields(fundsWithYields)
                     .forEach(log::info);
@@ -103,6 +92,17 @@ public class CafciClientCmdApp {
         public void visit(StopAction __) {
             log.info("stopping...");
             stop();
+        }
+
+        @Impure(cause = "LocalDate.now()")
+        private Stream<Yield> fetchYields(Fund fund,
+                                          FundClass fundClass,
+                                          CafciApi api) {
+            return api.fetchYield(
+                    LocalDate.now().minusMonths(1),
+                    LocalDate.now(),
+                    fund,
+                    fundClass);
         }
     }
 }
