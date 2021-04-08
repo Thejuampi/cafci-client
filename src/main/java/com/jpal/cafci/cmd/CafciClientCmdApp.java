@@ -63,12 +63,10 @@ public class CafciClientCmdApp {
         public void visit(ReadFileAction ignored) {
             var fundWithYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
                     .filter(l -> !l.startsWith("#"))
-                    .map(l -> l.replaceAll("\\s+", "\\\s+"))
-                    .peek(l -> log.info("line -> {}", l))
-                    .flatMap(l -> config.fundsQuery().findByClassNameRegex(l))
-                    .peek(fnc -> log.info("found {}", fnc::_2))
+                    .map(l -> l.replaceAll("\\s+", "\\\s+")).peek(l -> log.info("line -> {}", l))
+                    .flatMap(l -> config.fundsQuery().findByClassNameRegex(l)).peek(fnc -> log.info("found {}", fnc::_2))
                     .flatMap(fnc -> fetchYields(fnc._1(), fnc._2(), config.api())
-                            .map(_yield -> tuple(fnc._2(), _yield)));
+                    .map(_yield -> tuple(fnc._2(), _yield)));
 
             YieldReporter
                     .reportYields(fundWithYields)
