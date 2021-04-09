@@ -1,23 +1,19 @@
 package com.jpal.cafci.cmd;
 
 import com.jpal.cafci.shared.Result;
-import lombok.Value;
 
 import java.util.Map;
 
 import static com.jpal.cafci.shared.Result.error;
 import static com.jpal.cafci.shared.Result.ok;
+import static com.jpal.cafci.shared.Utils.select;
 
-@Value
-public class FundAction implements Action {
-
-    String fund;
+public record FundAction(String fund) implements Action {
 
     static Result<Action, String> create(Map<String, String> args) {
-        if (args.containsKey("name")) return ok(new FundAction(args.get("name")));
-        if (args.containsKey("n")) return ok(new FundAction(args.get("n")));
-
-        return error("neither --name nor -n was specified");
+        return select(args, "name", "n").findAny()
+                .<Result<Action, String>>map(s -> ok(new FundAction(s)))
+                .orElseGet(() -> error("neither --name nor -n was specified"));
     }
 
     @Override
