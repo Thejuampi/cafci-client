@@ -1,11 +1,10 @@
 package com.jpal.cafci.cmd;
 
-import lombok.Value;
+public record StopAction() implements Action {
 
-@Value
-public class StopAction implements Action {
     @Override
     public void execute(ActionVisitor visitor) {
         visitor.visit(this);
     }
+
 }

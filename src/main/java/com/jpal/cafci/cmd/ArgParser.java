@@ -10,7 +10,7 @@ import static com.jpal.cafci.shared.Result.error;
 import static com.jpal.cafci.shared.Result.ok;
 import static java.util.stream.Collectors.*;
 
-public class ArgParserV2 {
+public class ArgParser {
 
     public static Result<Args, String> parse(String input) {
         if (input.isBlank())

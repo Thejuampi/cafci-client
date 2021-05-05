@@ -12,7 +12,7 @@ public class Actions {
 
     @Pure
     Result<Action, String> action(String input) {
-        var actionAndArgs = ArgParserV2.parse(input);
+        var actionAndArgs = ArgParser.parse(input);
         if (actionAndArgs.isError()) return actionAndArgs.cast();
 
         var args = actionAndArgs.ok();

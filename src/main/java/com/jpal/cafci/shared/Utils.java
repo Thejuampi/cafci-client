@@ -21,6 +21,7 @@ public class Utils {
                 v -> v));
     }
 
+    @SafeVarargs
     @Pure
     public static <K, V> Stream<V> select(Map<K, V> m, K... keys) {
         return Arrays.stream(keys)
