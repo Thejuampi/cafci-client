@@ -10,5 +10,7 @@ public interface ActionVisitor {
 
     void visit(StopAction __);
 
-    void visit(SaveToJsonAction saveToJsonAction);
+    void visit(SaveToJsonAction __);
+
+    void visit(ReadFundsFromFileAction __);
 }

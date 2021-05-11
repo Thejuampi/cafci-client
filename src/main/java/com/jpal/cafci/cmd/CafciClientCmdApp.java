@@ -3,10 +3,10 @@ package com.jpal.cafci.cmd;
 import com.google.gson.Gson;
 import com.jpal.cafci.client.*;
 import com.jpal.cafci.shared.Impure;
-import com.jpal.cafci.shared.Utils;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 import static com.jpal.cafci.client.Utils.spacesAsWildcard;
 import static com.jpal.cafci.shared.Tuple.tuple;
 import static java.nio.file.Files.lines;
+import static java.util.stream.Collectors.joining;
 
 @Value
 @Getter(AccessLevel.NONE)
@@ -61,8 +63,7 @@ public class CafciClientCmdApp {
         public void visit(FetchFundsAction ignored) {
             log.info("fetching yields...");
             var funds = config.api().fetchFunds();
-            var fundsById = Utils.indexBy(funds, Fund::id);
-            config.setAllFundsCommand().set(fundsById);
+            config.setAllFundsCommand().set(funds);
         }
 
         @SneakyThrows
@@ -101,15 +102,30 @@ public class CafciClientCmdApp {
 
         @Override
         public void visit(SaveToJsonAction saveToJsonAction) {
-            try (val writer = Files.newOutputStream(Paths.get("src", "main", "resources", "funds.json"), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+            try (var writer = Files.newOutputStream(Paths.get("src", "main", "resources", "funds.json"), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
                 writer.write(bytes("["));
-                config.fundsQuery().findAll()
-                        .map(fund -> toJson(fund) + ",\n")
-                        .map(json -> bytes(json))
-                        .forEach(bytes -> write(writer, bytes));
+                var json = config.fundsQuery().findAll()
+                        .map(fund -> toJson(fund))
+                        .collect(joining(",\n", "[", "]"));
+                writer.write(bytes(json));
                 writer.write(bytes("]"));
             } catch (IOException e) {
                 log.error("Error saving funds", e);
+            }
+        }
+
+        @Override
+        public void visit(ReadFundsFromFileAction __) {
+            try (BufferedReader reader = Files.newBufferedReader(Paths.get("src", "main", "resources", "funds.json"))) {
+                Fund[] funds = new Gson().fromJson(reader, Fund[].class);
+                if(funds.length == 0) {
+                    log.warn("no funds read from file");
+                    return;
+                }
+                log.info("setting {} new values", funds.length);
+                config.setAllFundsCommand().set(Arrays.stream(funds));
+            } catch (IOException e) {
+                log.error("error reading", e);
             }
         }
 

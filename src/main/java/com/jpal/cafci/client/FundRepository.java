@@ -47,6 +47,12 @@ public class FundRepository
     }
 
     @Override
+    public Map<String, Fund> set(Stream<Fund> funds) {
+        var indexed = com.jpal.cafci.shared.Utils.indexBy(funds, Fund::id);
+        return set(indexed);
+    }
+
+    @Override
     @Impure(cause = "output may change from call to call")
     public Stream<Tuple> findByClassNameRegex(String regex) {
         var pattern = compile(containing(regex), CASE_INSENSITIVE);

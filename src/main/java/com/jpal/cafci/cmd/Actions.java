@@ -22,6 +22,7 @@ public class Actions {
             case "fund" -> FundAction.create(args.args());
             case "stop" -> ok(new StopAction());
             case "save" -> ok(new SaveToJsonAction());
+            case "read" -> ok(new ReadFundsFromFileAction());
             default -> error("unable to get an action for input [%s]", input);
         };
     }
