@@ -35,7 +35,7 @@ class YieldReporterTest {
         Assertions.assertThat(result.toList()).isEqualTo(List.of(
                 "Report of yields",
                 "----------------",
-                "fund: funds class name day: Wed - 20/1/21 direct: 1,000% accumulated: 3,000%"
+                "fund: funds class name day: Wed - 20/1/21 direct: 1,0000% accumulated: 3,000%"
         ));
     }
 
