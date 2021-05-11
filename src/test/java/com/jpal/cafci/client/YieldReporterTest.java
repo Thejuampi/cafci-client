@@ -32,10 +32,10 @@ class YieldReporterTest {
         var result = YieldReporter.reportYields(input);
 
         //then
-        Assertions.assertThat(result).isEqualTo(List.of(
+        Assertions.assertThat(result.toList()).isEqualTo(List.of(
                 "Report of yields",
                 "----------------",
-                "fund: funds class name day: Wed - 20/2/21 direct: 1,000% accumulated: 3,000%"
+                "fund: funds class name day: Wed - 20/1/21 direct: 1,000% accumulated: 3,000%"
         ));
     }
 
@@ -46,7 +46,7 @@ class YieldReporterTest {
         //when
         var result = YieldReporter.reportYields(input);
         //then
-        Assertions.assertThat(result).isEqualTo(List.of("Report of yields", "----------------"));
+        Assertions.assertThat(result.toList()).isEqualTo(List.of("Report of yields", "----------------"));
     }
 
 }

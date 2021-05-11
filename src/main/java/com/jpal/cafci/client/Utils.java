@@ -13,6 +13,7 @@ import java.util.Map;
 public class Utils {
 
     public static String string(Map<?, ?> raw, String field) {
+        System.out.println("raw = " + raw + ", field = " + field);
         return (String) raw.get(field);
     }
 
@@ -27,8 +28,9 @@ public class Utils {
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     public static List<Map<?, ?>> listOfMaps(Map<?, ?> raw, String field) {
         List<Map<?, ?>> result = (List<Map<?, ?>>) raw.get(field);
-        if (result == null) return Collections.emptyList();
-        return result;
+        return result != null ?
+                result :
+                Collections.emptyList();
     }
 
     public static Boolean bool(Map<?, ?> map, String field) {
@@ -41,7 +43,9 @@ public class Utils {
 
     @SuppressWarnings("SameParameterValue")
     static LocalDate date(Map<?, ?> raw, String field, DateTimeFormatter fmt) {
-        return LocalDate.parse(string(raw, field), fmt);
+        LocalDate date = LocalDate.parse(string(raw, field), fmt);
+        System.out.println("date = " + date);
+        return date;
     }
 
     public static String containing(String token) {

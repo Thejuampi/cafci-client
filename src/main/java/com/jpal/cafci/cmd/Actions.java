@@ -21,6 +21,7 @@ public class Actions {
             case "file" -> ok(new ReadFileAction());
             case "fund" -> FundAction.create(args.args());
             case "stop" -> ok(new StopAction());
+            case "save" -> ok(new SaveToJsonAction());
             default -> error("unable to get an action for input [%s]", input);
         };
     }

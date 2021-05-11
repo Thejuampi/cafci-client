@@ -9,4 +9,6 @@ public interface ActionVisitor {
     void visit(FundAction fundAction);
 
     void visit(StopAction __);
+
+    void visit(SaveToJsonAction saveToJsonAction);
 }

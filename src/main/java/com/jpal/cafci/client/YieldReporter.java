@@ -30,7 +30,7 @@ public class YieldReporter {
         return String.format("%s - %s/%s/%s",
                 date.getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, Locale.ROOT),
                 date.getDayOfMonth(),
-                date.getMonthValue() + 1,
+                date.getMonthValue(),
                 date.getYear() % 1000);
     }
 

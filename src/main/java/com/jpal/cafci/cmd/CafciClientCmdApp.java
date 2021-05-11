@@ -1,13 +1,19 @@
 package com.jpal.cafci.cmd;
 
+import com.google.gson.Gson;
 import com.jpal.cafci.client.*;
 import com.jpal.cafci.shared.Impure;
 import com.jpal.cafci.shared.Utils;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,6 +27,7 @@ import static java.nio.file.Files.lines;
 @Getter(AccessLevel.NONE)
 public class CafciClientCmdApp {
 
+    public static final Gson GSON = new Gson();
     AtomicBoolean running = new AtomicBoolean(false);
 
     CafciConfig config;
@@ -92,6 +99,20 @@ public class CafciClientCmdApp {
             stop();
         }
 
+        @Override
+        public void visit(SaveToJsonAction saveToJsonAction) {
+            try (val writer = Files.newOutputStream(Paths.get("src", "main", "resources", "funds.json"), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+                writer.write(bytes("["));
+                config.fundsQuery().findAll()
+                        .map(fund -> toJson(fund) + ",\n")
+                        .map(json -> bytes(json))
+                        .forEach(bytes -> write(writer, bytes));
+                writer.write(bytes("]"));
+            } catch (IOException e) {
+                log.error("Error saving funds", e);
+            }
+        }
+
         @Impure(cause = "LocalDate.now()")
         private Stream<Yield> fetchYields(Fund fund,
                                           FundClass fundClass,
@@ -102,5 +123,21 @@ public class CafciClientCmdApp {
                     fund,
                     fundClass);
         }
+    }
+
+    private byte[] bytes(String s) {
+        return s.getBytes(StandardCharsets.UTF_8);
+    }
+
+    private void write(OutputStream writer, byte[] bytes) {
+        try {
+            writer.write(bytes);
+        } catch (IOException e) {
+            log.error("error writing bytes {}", bytes);
+        }
+    }
+
+    private String toJson(Fund fund) {
+        return GSON.toJson(fund);
     }
 }

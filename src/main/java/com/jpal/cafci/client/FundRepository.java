@@ -57,4 +57,9 @@ public class FundRepository
                         .matches())
                 .map(fundClass -> tuple(fund, fundClass)));
     }
+
+    @Override
+    public Stream<Fund> findAll() {
+        return cache.get().values().stream();
+    }
 }
