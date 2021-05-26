@@ -17,10 +17,10 @@ public class Actions {
 
         var args = actionAndArgs.ok();
         return switch (args.action()) {
-            case "fetch" -> ok(new FetchFundsAction());
-            case "file" -> ok(new ReadFileAction());
+            case "fetch" -> ok(FetchFundsAction.instance());
+            case "file" -> ok(ReadFileAction.instance());
             case "fund" -> FundAction.create(args.args());
-            case "stop" -> ok(new StopAction());
+            case "stop" -> ok(StopAction.instance());
             case "save" -> ok(new SaveToJsonAction());
             case "read" -> ok(new ReadFundsFromFileAction());
             default -> error("unable to get an action for input [%s]", input);

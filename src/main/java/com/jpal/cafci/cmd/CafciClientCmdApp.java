@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -119,10 +118,9 @@ public class CafciClientCmdApp {
             try (BufferedReader reader = Files.newBufferedReader(Paths.get("src", "main", "resources", "funds.json"))) {
                 Fund[] funds = new Gson().fromJson(reader, Fund[].class);
                 if(funds.length == 0) {
-                    log.warn("no funds read from file");
+                    log.warn("no funds red from file");
                     return;
                 }
-                log.info("setting {} new values", funds.length);
                 config.setAllFundsCommand().set(Arrays.stream(funds));
             } catch (IOException e) {
                 log.error("error reading", e);
@@ -134,7 +132,7 @@ public class CafciClientCmdApp {
                                           FundClass fundClass,
                                           CafciApi api) {
             return api.fetchYield(
-                    LocalDate.now().minusMonths(1),
+                    LocalDate.now().minusMonths(1).minusDays(1),
                     LocalDate.now(),
                     fund,
                     fundClass);
@@ -143,14 +141,6 @@ public class CafciClientCmdApp {
 
     private byte[] bytes(String s) {
         return s.getBytes(StandardCharsets.UTF_8);
-    }
-
-    private void write(OutputStream writer, byte[] bytes) {
-        try {
-            writer.write(bytes);
-        } catch (IOException e) {
-            log.error("error writing bytes {}", bytes);
-        }
     }
 
     private String toJson(Fund fund) {
