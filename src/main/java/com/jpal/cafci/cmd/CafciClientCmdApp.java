@@ -3,6 +3,7 @@ package com.jpal.cafci.cmd;
 import com.google.gson.Gson;
 import com.jpal.cafci.client.*;
 import com.jpal.cafci.shared.Impure;
+import com.jpal.cafci.shared.Tuple;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 
@@ -69,22 +70,29 @@ public class CafciClientCmdApp {
         @Override
         public void visit(ReadFileAction ignored) {
             var fundWithYields = lines(Paths.get("src", "main", "resources", "yields.csv"))
-                    .filter(l -> !l.startsWith("#"))
-                    .map(l -> l.replaceAll("\\s+", "\\\s+")).peek(l -> log.info("line -> {}", l))
-                    .flatMap(l -> config.fundsQuery().findByClassNameRegex(l)).peek(fnc -> log.info("found {}", fnc::_2))
-                    .flatMap(fnc -> fetchYields(fnc._1(), fnc._2(), config.api())
-                    .map(_yield -> tuple(fnc._2(), _yield)));
+                    .filter(line -> !line.startsWith("#"))
+                    .map(line -> line.replaceAll("\\s+", "\\\s+"))
+                    .flatMap(line -> config.fundsQuery().findByClassNameRegex(line))
+                    .flatMap(fundAndClass -> fetchYields(fund(fundAndClass), _class(fundAndClass), config.api())
+                    .map(_yield -> tuple(_class(fundAndClass), _yield)));
 
             YieldReporter
                     .reportYields(fundWithYields)
                     .forEach(log::info);
         }
 
+        private static FundClass _class(Tuple fundAndClass) {
+            return fundAndClass._2();
+        }
+
+        private static Fund fund(Tuple fundAndClass) {
+            return fundAndClass._1();
+        }
+
         @Override
         public void visit(FundAction fundAction) {
             var fundsWithYields = config.fundsQuery()
                     .findByClassNameRegex(spacesAsWildcard(fundAction.fund()))
-                    .peek(fnc -> log.info("found {}", fnc::_2))
                     .flatMap(fnc -> fetchYields(fnc._1(), fnc._2(), config.api())
                     .map(_yield -> tuple(fnc._2(), _yield)));
 
@@ -102,12 +110,10 @@ public class CafciClientCmdApp {
         @Override
         public void visit(SaveToJsonAction saveToJsonAction) {
             try (var writer = Files.newOutputStream(Paths.get("src", "main", "resources", "funds.json"), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
-                writer.write(bytes("["));
                 var json = config.fundsQuery().findAll()
                         .map(fund -> toJson(fund))
                         .collect(joining(",\n", "[", "]"));
                 writer.write(bytes(json));
-                writer.write(bytes("]"));
             } catch (IOException e) {
                 log.error("Error saving funds", e);
             }
@@ -122,7 +128,7 @@ public class CafciClientCmdApp {
                     return;
                 }
                 config.setAllFundsCommand().set(Arrays.stream(funds));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("error reading", e);
             }
         }
