@@ -137,11 +137,16 @@ public class CafciClientCmdApp {
         private Stream<Yield> fetchYields(Fund fund,
                                           FundClass fundClass,
                                           CafciApi api) {
-            return api.fetchYield(
-                    LocalDate.now().minusMonths(1).minusDays(1),
-                    LocalDate.now(),
-                    fund,
-                    fundClass);
+            try {
+                return api.fetchYield(
+                        LocalDate.now().minusMonths(1).minusDays(1),
+                        LocalDate.now(),
+                        fund,
+                        fundClass);
+            } catch (Exception e) {
+                log.error("error fetching yield for fund class {}", fundClass.name(), e);
+                return Stream.empty();
+            }
         }
     }
 
