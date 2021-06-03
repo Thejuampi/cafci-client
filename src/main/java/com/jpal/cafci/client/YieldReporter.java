@@ -18,7 +18,7 @@ public class YieldReporter {
     @Pure
     public Stream<String> reportYields(Stream<Tuple> yields) {
         var report = yields
-                .map(t -> format("fund: %s day: %s direct: %.4f%% accumulated: %.3f%%",
+                .map(t -> format(Locale.ENGLISH, "fund: %s day: %s direct: %.4f%% accumulated: %.3f%%",
                         fundClass(t).name(),
                         day(_yield(t).to()),
                         _yield(t).direct(),

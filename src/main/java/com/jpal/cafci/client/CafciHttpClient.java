@@ -32,7 +32,7 @@ public final class CafciHttpClient {
         val request = HttpRequest.newBuilder(URI.create(format("https://api.cafci.org.ar/fondo/%s/clase/%s/rendimiento/%s/%s?step=1", fund, fundClass, from.format(fmt), to.format(fmt))))
                 .GET()
                 .build();
-
+        
         return send(request).body();
     }
 
